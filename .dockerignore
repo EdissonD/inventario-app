@@ -1,0 +1,10 @@
+@"
+node_modules
+npm-debug.log
+.git
+.github
+.DS_Store
+README.md
+k8s
+*.pdf
+"@ | Set-Content -Encoding UTF8 .dockerignore
