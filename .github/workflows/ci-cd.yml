@@ -48,6 +48,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
+      - name: Configurar Docker Buildx
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
@@ -69,7 +70,23 @@ jobs:
           tags: |
             type=raw,value=latest
             type=sha,format=long
+            - name: Build image (local)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: inventario-app:scan
 
+      - name: Escanear imagen con Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: inventario-app:scan
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL
+          
       - name: Construir y publicar imagen
         uses: docker/build-push-action@v6
         with:
