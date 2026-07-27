@@ -26,10 +26,18 @@ spec:
           env:
             - name: PORT
               value: "3000"
+
             - name: APP_VERSION
               value: "v1"
+
             - name: APP_COLOR
               value: "blue"
+
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: inventario-secret
+                  key: API_KEY
           readinessProbe:
             httpGet:
               path: /health
