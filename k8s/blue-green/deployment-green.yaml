@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventario-app-green
+  labels:
+    app: inventario-app
+    version: green
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inventario-app
+      version: green
+  template:
+    metadata:
+      labels:
+        app: inventario-app
+        version: green
+    spec:
+      containers:
+        - name: inventario-app
+          image: ghcr.io/edissond/inventario-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: APP_VERSION
+              value: "v2"
+            - name: APP_COLOR
+              value: "green"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
